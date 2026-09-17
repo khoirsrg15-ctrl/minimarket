@@ -1,0 +1,1329 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Kasir Minimarket</title>
+
+<style>
+
+* {
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    margin: 0;
+    background: #f1f3f6;
+    color: #222;
+}
+
+/* HEADER */
+
+header {
+    background: #0066cc;
+    color: white;
+    padding: 25px;
+    text-align: center;
+}
+
+header h1 {
+    margin: 0 0 8px;
+}
+
+/* CONTAINER */
+
+.container {
+    width: 95%;
+    max-width: 1200px;
+    margin: 25px auto;
+}
+
+/* CARD */
+
+.card {
+    background: white;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 12px;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+}
+
+.card h2 {
+    margin-top: 0;
+}
+
+/* INPUT */
+
+.form {
+    display: grid;
+    grid-template-columns:
+        1fr 2fr 1fr 1fr auto;
+
+    gap: 10px;
+}
+
+input,
+select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 7px;
+    font-size: 15px;
+}
+
+/* BUTTON */
+
+button {
+    border: none;
+    padding: 12px 18px;
+    border-radius: 7px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.btn-tambah {
+    background: #008f39;
+    color: white;
+}
+
+.btn-tambah:hover {
+    background: #006f2c;
+}
+
+.btn-hapus {
+    background: #dc3545;
+    color: white;
+    padding: 7px 12px;
+}
+
+.btn-bayar {
+    background: #0066cc;
+    color: white;
+    width: 100%;
+    font-size: 17px;
+}
+
+.btn-reset {
+    background: #666;
+    color: white;
+    width: 100%;
+    margin-top: 10px;
+}
+
+/* TABLE */
+
+.table-wrapper {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th,
+td {
+    padding: 12px;
+    border-bottom: 1px solid #ddd;
+    text-align: center;
+}
+
+th {
+    background: #0066cc;
+    color: white;
+}
+
+.kosong {
+    color: #888;
+    padding: 30px;
+}
+
+/* TOTAL */
+
+.total-box {
+    background: #f5f8ff;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+.total-box h1 {
+    color: #0066cc;
+    margin: 5px 0;
+}
+
+/* PEMBAYARAN */
+
+.payment-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.payment-box {
+    padding: 15px;
+    background: #fafafa;
+    border-radius: 8px;
+}
+
+.payment-box label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+/* TRANSFER */
+
+.transfer-info {
+    display: none;
+    background: #eef6ff;
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 15px;
+}
+
+.transfer-info p {
+    margin: 8px 0;
+}
+
+/* KEMBALIAN */
+
+.kembalian {
+    color: #008f39;
+}
+
+/* STRUK */
+
+#struk {
+    display: none;
+    background: white;
+    padding: 25px;
+    margin-top: 20px;
+    border: 1px dashed #999;
+}
+
+.struk-header {
+    text-align: center;
+}
+
+.struk-item {
+    display: flex;
+    justify-content: space-between;
+    margin: 8px 0;
+}
+
+.garis {
+    border-top: 1px dashed #555;
+    margin: 15px 0;
+}
+
+.cetak {
+    background: #111;
+    color: white;
+    margin-top: 15px;
+}
+
+/* MOBILE */
+
+@media(max-width: 768px) {
+
+    .form {
+        grid-template-columns: 1fr;
+    }
+
+    .payment-grid {
+        grid-template-columns: 1fr;
+    }
+
+    table {
+        font-size: 13px;
+    }
+
+}
+
+</style>
+</head>
+
+
+<body>
+
+<header>
+
+    <h1>🛒 TOKO ALFI KHOIR</h1>
+
+    <p>SISTEM KASIR</p>
+
+</header>
+
+
+<div class="container">
+
+
+<!-- ========================= -->
+<!-- TAMBAH BARANG -->
+<!-- ========================= -->
+
+<div class="card">
+
+    <h2>📦 Tambah Barang</h2>
+
+    <div class="form">
+
+        <input
+            type="text"
+            id="kode"
+            placeholder="Kode"
+        >
+
+        <input
+            type="text"
+            id="nama"
+            placeholder="Nama Barang"
+        >
+
+        <input
+            type="number"
+            id="harga"
+            placeholder="Harga"
+        >
+
+        <input
+            type="number"
+            id="jumlah"
+            value="1"
+            min="1"
+            placeholder="Jumlah"
+        >
+
+        <button
+            class="btn-tambah"
+            onclick="tambahBarang()"
+        >
+            + TAMBAH
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- ========================= -->
+<!-- KERANJANG -->
+<!-- ========================= -->
+
+<div class="card">
+
+    <h2>🛍️ Daftar Belanja</h2>
+
+    <div class="table-wrapper">
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>No</th>
+
+                    <th>Kode</th>
+
+                    <th>Nama Barang</th>
+
+                    <th>Harga</th>
+
+                    <th>Jumlah</th>
+
+                    <th>Subtotal</th>
+
+                    <th>Aksi</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody id="keranjang">
+
+                <tr>
+
+                    <td
+                        colspan="7"
+                        class="kosong"
+                    >
+                        Belum ada barang
+
+                    </td>
+
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+
+<!-- ========================= -->
+<!-- TOTAL -->
+<!-- ========================= -->
+
+<div class="total-box">
+
+    <p>Total Belanja</p>
+
+    <h1 id="total">
+        Rp 0
+    </h1>
+
+</div>
+
+
+<!-- ========================= -->
+<!-- PEMBAYARAN -->
+<!-- ========================= -->
+
+<div class="card">
+
+    <h2>💳 Pembayaran</h2>
+
+    <div class="payment-grid">
+
+
+        <!-- METODE -->
+
+        <div class="payment-box">
+
+            <label>
+                Metode Pembayaran
+            </label>
+
+            <select
+                id="metode"
+                onchange="ubahMetode()"
+            >
+
+                <option value="">
+                    Pilih Pembayaran
+                </option>
+
+                <option value="tunai">
+                    💵 Tunai
+                </option>
+
+                <option value="transfer">
+                    🏦 Transfer
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <!-- UANG -->
+
+        <div
+            class="payment-box"
+            id="tunaiBox"
+        >
+
+            <label>
+                Uang Dibayar
+            </label>
+
+            <input
+                type="number"
+                id="uang"
+                placeholder="Rp 0"
+                oninput="hitungKembalian()"
+            >
+
+        </div>
+
+    </div>
+
+
+    <!-- ========================= -->
+    <!-- INFO TRANSFER -->
+    <!-- ========================= -->
+
+    <div
+        class="transfer-info"
+        id="transferInfo"
+    >
+
+        <h3>
+            🏦 Informasi Transfer
+        </h3>
+
+
+        <label>
+            Pilih Bank
+        </label>
+
+        <select id="bank">
+
+            <option value="">
+                Pilih Bank
+            </option>
+
+            <option>
+                BCA
+            </option>
+
+            <option>
+                BRI
+            </option>
+
+            <option>
+                BNI
+            </option>
+
+            <option>
+                Mandiri
+            </option>
+
+            <option>
+                BSI
+            </option>
+
+        </select>
+
+
+        <br><br>
+
+
+        <label>
+            Nama Pemilik Rekening
+        </label>
+
+        <input
+            type="text"
+            id="namaPemilik"
+            placeholder="Nama pemilik rekening"
+        >
+
+
+        <br><br>
+
+
+        <label>
+            Nomor Rekening Tujuan
+        </label>
+
+        <input
+            type="text"
+            id="rekening"
+            placeholder="Nomor rekening"
+        >
+
+
+        <br><br>
+
+
+        <p>
+            <b>Total Transfer:</b>
+        </p>
+
+        <h2 id="totalTransfer">
+            Rp 0
+        </h2>
+
+    </div>
+
+
+    <!-- ========================= -->
+    <!-- KEMBALIAN -->
+    <!-- ========================= -->
+
+    <div
+        class="payment-box"
+        style="margin-top:20px"
+    >
+
+        <label>
+            Kembalian
+        </label>
+
+        <h2
+            class="kembalian"
+            id="kembalian"
+        >
+            Rp 0
+        </h2>
+
+    </div>
+
+
+    <br>
+
+
+    <button
+        class="btn-bayar"
+        onclick="bayar()"
+    >
+        💳 BAYAR SEKARANG
+    </button>
+
+
+    <button
+        class="btn-reset"
+        onclick="transaksiBaru()"
+    >
+        🔄 TRANSAKSI BARU
+    </button>
+
+</div>
+
+
+<!-- ========================= -->
+<!-- STRUK -->
+<!-- ========================= -->
+
+<div
+    class="card"
+    id="struk"
+>
+
+    <div class="struk-header">
+
+        <h2>MINIMARKET ALFI KHOIR</h2>
+
+        <p>Struk Pembayaran</p>
+
+        <p id="tanggal"></p>
+
+    </div>
+
+
+    <div class="garis"></div>
+
+
+    <div id="strukBarang"></div>
+
+
+    <div class="garis"></div>
+
+
+    <div class="struk-item">
+
+        <b>Total</b>
+
+        <b id="strukTotal">
+            Rp 0
+        </b>
+
+    </div>
+
+
+    <div class="struk-item">
+
+        <span>Pembayaran</span>
+
+        <span id="strukMetode">
+            -
+        </span>
+
+    </div>
+
+
+    <div
+        class="struk-item"
+        id="strukBayarBox"
+    >
+
+        <span>Bayar</span>
+
+        <span id="strukBayar">
+            Rp 0
+        </span>
+
+    </div>
+
+
+    <div class="struk-item">
+
+        <b>Kembalian</b>
+
+        <b id="strukKembalian">
+            Rp 0
+        </b>
+
+    </div>
+
+
+    <div
+        id="strukTransfer"
+        style="display:none"
+    >
+
+        <div class="garis"></div>
+
+        <p>
+            <b>Bank:</b>
+            <span id="strukBank"></span>
+        </p>
+
+        <p>
+            <b>Nama:</b>
+            <span id="strukNama"></span>
+        </p>
+
+        <p>
+            <b>No. Rekening:</b>
+            <span id="strukRekening"></span>
+        </p>
+
+    </div>
+
+
+    <div class="garis"></div>
+
+
+    <p style="text-align:center">
+        Terima kasih telah berbelanja 🙏
+    </p>
+
+
+    <button
+        class="cetak"
+        onclick="window.print()"
+    >
+        🖨️ CETAK STRUK
+    </button>
+
+</div>
+
+
+</div>
+
+
+<script>
+
+/* ================================
+   DATA KERANJANG
+================================ */
+
+let barang = [];
+
+
+/* ================================
+   FORMAT RUPIAH
+================================ */
+
+function rupiah(angka) {
+
+    return new Intl.NumberFormat(
+        "id-ID",
+        {
+            style: "currency",
+            currency: "IDR",
+            minimumFractionDigits: 0
+        }
+    ).format(angka);
+
+}
+
+
+/* ================================
+   TAMBAH BARANG
+================================ */
+
+function tambahBarang() {
+
+    let kode =
+        document.getElementById("kode").value.trim();
+
+    let nama =
+        document.getElementById("nama").value.trim();
+
+    let harga =
+        Number(
+            document.getElementById("harga").value
+        );
+
+    let jumlah =
+        Number(
+            document.getElementById("jumlah").value
+        );
+
+
+    if (
+        kode === "" ||
+        nama === "" ||
+        harga <= 0 ||
+        jumlah <= 0
+    ) {
+
+        alert(
+            "Mohon isi semua data barang!"
+        );
+
+        return;
+
+    }
+
+
+    barang.push({
+
+        kode: kode,
+
+        nama: nama,
+
+        harga: harga,
+
+        jumlah: jumlah
+
+    });
+
+
+    tampilkanBarang();
+
+
+    document.getElementById("kode").value = "";
+
+    document.getElementById("nama").value = "";
+
+    document.getElementById("harga").value = "";
+
+    document.getElementById("jumlah").value = 1;
+
+
+    document.getElementById("kode").focus();
+
+}
+
+
+/* ================================
+   TAMPILKAN BARANG
+================================ */
+
+function tampilkanBarang() {
+
+    let tabel =
+        document.getElementById("keranjang");
+
+
+    tabel.innerHTML = "";
+
+
+    if (barang.length === 0) {
+
+        tabel.innerHTML = `
+
+            <tr>
+
+                <td
+                    colspan="7"
+                    class="kosong"
+                >
+                    Belum ada barang
+                </td>
+
+            </tr>
+
+        `;
+
+    }
+
+
+    let total = 0;
+
+
+    barang.forEach(
+        (item, index) => {
+
+            let subtotal =
+                item.harga * item.jumlah;
+
+
+            total += subtotal;
+
+
+            tabel.innerHTML += `
+
+                <tr>
+
+                    <td>
+                        ${index + 1}
+                    </td>
+
+                    <td>
+                        ${item.kode}
+                    </td>
+
+                    <td>
+                        ${item.nama}
+                    </td>
+
+                    <td>
+                        ${rupiah(item.harga)}
+                    </td>
+
+                    <td>
+                        ${item.jumlah}
+                    </td>
+
+                    <td>
+                        ${rupiah(subtotal)}
+                    </td>
+
+                    <td>
+
+                        <button
+                            class="btn-hapus"
+                            onclick="hapusBarang(${index})"
+                        >
+                            Hapus
+                        </button>
+
+                    </td>
+
+                </tr>
+
+            `;
+
+        }
+    );
+
+
+    document.getElementById("total").innerText =
+        rupiah(total);
+
+
+    document.getElementById("totalTransfer").innerText =
+        rupiah(total);
+
+
+    hitungKembalian();
+
+}
+
+
+/* ================================
+   HAPUS BARANG
+================================ */
+
+function hapusBarang(index) {
+
+    barang.splice(index, 1);
+
+    tampilkanBarang();
+
+}
+
+
+/* ================================
+   HITUNG TOTAL
+================================ */
+
+function hitungTotal() {
+
+    let total = 0;
+
+
+    barang.forEach(
+        item => {
+
+            total +=
+                item.harga * item.jumlah;
+
+        }
+    );
+
+
+    return total;
+
+}
+
+
+/* ================================
+   GANTI METODE
+================================ */
+
+function ubahMetode() {
+
+    let metode =
+        document.getElementById("metode").value;
+
+
+    let transfer =
+        document.getElementById("transferInfo");
+
+
+    if (metode === "transfer") {
+
+        transfer.style.display = "block";
+
+    } else {
+
+        transfer.style.display = "none";
+
+    }
+
+
+    hitungKembalian();
+
+}
+
+
+/* ================================
+   HITUNG KEMBALIAN
+================================ */
+
+function hitungKembalian() {
+
+    let metode =
+        document.getElementById("metode").value;
+
+
+    let total =
+        hitungTotal();
+
+
+    let kembalian = 0;
+
+
+    if (metode === "tunai") {
+
+        let uang =
+            Number(
+                document.getElementById("uang").value
+            );
+
+
+        kembalian =
+            uang - total;
+
+
+        if (kembalian < 0) {
+
+            kembalian = 0;
+
+        }
+
+    }
+
+
+    document.getElementById("kembalian").innerText =
+        rupiah(kembalian);
+
+}
+
+
+/* ================================
+   BAYAR
+================================ */
+
+function bayar() {
+
+    if (barang.length === 0) {
+
+        alert(
+            "Keranjang masih kosong!"
+        );
+
+        return;
+
+    }
+
+
+    let metode =
+        document.getElementById("metode").value;
+
+
+    if (metode === "") {
+
+        alert(
+            "Pilih metode pembayaran!"
+        );
+
+        return;
+
+    }
+
+
+    let total =
+        hitungTotal();
+
+
+    let uang = 0;
+
+    let kembalian = 0;
+
+
+    /* TUNAI */
+
+    if (metode === "tunai") {
+
+        uang =
+            Number(
+                document.getElementById("uang").value
+            );
+
+
+        if (uang < total) {
+
+            alert(
+                "Uang kurang " +
+                rupiah(total - uang)
+            );
+
+            return;
+
+        }
+
+
+        kembalian =
+            uang - total;
+
+    }
+
+
+    /* TRANSFER */
+
+    if (metode === "transfer") {
+
+        let bank =
+            document.getElementById("bank").value;
+
+        let nama =
+            document.getElementById("namaPemilik").value.trim();
+
+        let rekening =
+            document.getElementById("rekening").value.trim();
+
+
+        if (
+            bank === "" ||
+            nama === "" ||
+            rekening === ""
+        ) {
+
+            alert(
+                "Lengkapi informasi transfer!"
+            );
+
+            return;
+
+        }
+
+    }
+
+
+    /* TAMPILKAN STRUK */
+
+    buatStruk(
+        metode,
+        total,
+        uang,
+        kembalian
+    );
+
+
+    alert(
+        "✅ PEMBAYARAN BERHASIL!"
+    );
+
+}
+
+
+/* ================================
+   BUAT STRUK
+================================ */
+
+function buatStruk(
+    metode,
+    total,
+    uang,
+    kembalian
+) {
+
+    let struk =
+        document.getElementById("struk");
+
+
+    struk.style.display = "block";
+
+
+    /* TANGGAL */
+
+    let sekarang =
+        new Date();
+
+
+    document.getElementById("tanggal").innerText =
+        sekarang.toLocaleString("id-ID");
+
+
+    /* BARANG */
+
+    let daftar =
+        document.getElementById("strukBarang");
+
+
+    daftar.innerHTML = "";
+
+
+    barang.forEach(
+        item => {
+
+            let subtotal =
+                item.harga * item.jumlah;
+
+
+            daftar.innerHTML += `
+
+                <div class="struk-item">
+
+                    <span>
+                        ${item.nama}
+                        x${item.jumlah}
+                    </span>
+
+                    <span>
+                        ${rupiah(subtotal)}
+                    </span>
+
+                </div>
+
+            `;
+
+        }
+    );
+
+
+    document.getElementById("strukTotal").innerText =
+        rupiah(total);
+
+
+    document.getElementById("strukMetode").innerText =
+        metode.toUpperCase();
+
+
+    document.getElementById("strukBayar").innerText =
+        rupiah(uang);
+
+
+    document.getElementById("strukKembalian").innerText =
+        rupiah(kembalian);
+
+
+    /* TRANSFER */
+
+    if (metode === "transfer") {
+
+        document.getElementById("strukBayarBox")
+            .style.display = "none";
+
+
+        document.getElementById("strukTransfer")
+            .style.display = "block";
+
+
+        document.getElementById("strukBank").innerText =
+            document.getElementById("bank").value;
+
+
+        document.getElementById("strukNama").innerText =
+            document.getElementById("namaPemilik").value;
+
+
+        document.getElementById("strukRekening").innerText =
+            document.getElementById("rekening").value;
+
+
+    } else {
+
+        document.getElementById("strukBayarBox")
+            .style.display = "flex";
+
+
+        document.getElementById("strukTransfer")
+            .style.display = "none";
+
+    }
+
+}
+
+
+/* ================================
+   TRANSAKSI BARU
+================================ */
+
+function transaksiBaru() {
+
+    if (
+        !confirm(
+            "Mulai transaksi baru?"
+        )
+    ) {
+
+        return;
+
+    }
+
+
+    barang = [];
+
+
+    document.getElementById("uang").value = "";
+
+    document.getElementById("metode").value = "";
+
+    document.getElementById("bank").value = "";
+
+    document.getElementById("namaPemilik").value = "";
+
+    document.getElementById("rekening").value = "";
+
+
+    document.getElementById("transferInfo")
+        .style.display = "none";
+
+
+    document.getElementById("struk")
+        .style.display = "none";
+
+
+    tampilkanBarang();
+
+}
+
+
+/* ================================
+   ENTER = TAMBAH BARANG
+================================ */
+
+document.addEventListener(
+    "keydown",
+    function(event) {
+
+        if (event.key === "Enter") {
+
+            let id =
+                document.activeElement.id;
+
+
+            if (
+                id === "kode" ||
+                id === "nama" ||
+                id === "harga" ||
+                id === "jumlah"
+            ) {
+
+                tambahBarang();
+
+            }
+
+        }
+
+    }
+);
+
+</script>
+
+</body>
+</html>
